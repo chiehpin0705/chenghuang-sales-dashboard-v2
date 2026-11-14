@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="城隍廟商品月銷售分析儀表板">
+  <meta name="theme-color" content="#8d2f24">
+  <title>城隍廟商品銷售儀表板 V2｜本機 Excel 分析</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="篩選條件">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">城</div><div><strong>城隍廟 V2</strong><span>本機 Excel 分析</span></div></div>
+      <section class="control-block"><div class="control-label">日期方式</div><div class="segmented" id="calendar-toggle"><button type="button" data-value="gregorian" class="active">西元月份</button><button type="button" data-value="lunar">農曆月份</button></div></section>
+      <section class="control-block"><div class="control-label">分析指標</div><div class="segmented" id="metric-toggle"><button type="button" data-value="revenue" class="active">銷售金額</button><button type="button" data-value="quantity">銷售數量</button></div><p class="microcopy" id="metric-note">跨商品比較建議使用銷售金額。</p></section>
+      <section class="control-block"><label class="control-label" for="month-filter">月份篩選</label><select id="month-filter"></select></section>
+      <section class="control-block"><div class="control-label">年度</div><div class="year-list" id="year-list"></div></section>
+      <section class="control-block products-block">
+        <div class="product-heading"><div><span class="control-label">關注商品</span><span class="count" id="selected-count">0 項</span></div><button type="button" class="text-button" id="clear-products">清除</button></div>
+        <label class="search-wrap"><span class="sr-only">搜尋商品</span><input id="product-search" type="search" placeholder="搜尋商品…" autocomplete="off"></label>
+        <button type="button" class="quick-button" id="select-main">快速選取主要商品</button>
+        <div class="product-list" id="product-list"></div>
+      </section>
+    </aside>
+    <main class="main">
+      <section class="panel panel-wide" style="margin-bottom:22px;padding:22px"><h2>上傳 Excel，立即分析</h2><p>檔案只在這個瀏覽器分頁處理，不會傳送或儲存到網站。重新整理或關閉分頁後資料即清除。</p><label class="outline-button" style="display:inline-block;cursor:pointer" for="excel-upload">選擇 .xlsx 檔案</label><input id="excel-upload" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="position:absolute;opacity:0;width:1px;height:1px"><p id="upload-status" role="status">尚未載入資料。可使用原始表格或修正版表格。</p></section>
+      <header class="page-header"><div><p class="eyebrow">MONTHLY SALES OVERVIEW</p><h1>每月商品銷售情況</h1><p class="subtitle" id="data-range">請先上傳 Excel 檔案</p></div><div class="header-actions"><button class="outline-button" type="button" id="download-csv">下載目前資料</button></div></header>
+      <section class="kpis" aria-label="銷售摘要">
+        <article class="kpi"><span>篩選期間銷售額</span><strong id="kpi-revenue">—</strong><small id="kpi-periods">—</small></article>
+        <article class="kpi"><span>最近一期變化</span><strong id="kpi-change">—</strong><small>相較前一期</small></article>
+        <article class="kpi"><span>表現最高商品</span><strong id="kpi-top">—</strong><small id="kpi-top-value">—</small></article>
+        <article class="kpi"><span>銷售筆數</span><strong id="kpi-days">—</strong><small>篩選範圍內</small></article>
+      </section>
+      <div class="selection-banner" id="selection-banner"><div class="banner-icon">✓</div><div><strong>先選擇你關注的商品</strong><span>未勾選的商品不會出現在圖表裡。你可以從左側逐項勾選，或快速選取主要商品。</span></div><button type="button" id="banner-select-main">選取主要商品</button></div>
+      <section class="panel panel-wide"><div class="panel-header"><div><p class="panel-kicker">趨勢</p><h2>月度銷售走勢</h2></div><span class="panel-note" id="trend-note">每條線代表一個已勾選商品</span></div><div class="chart chart-large" id="trend-chart"></div></section>
+      <div class="two-column">
+        <section class="panel"><div class="panel-header stack-mobile"><div><p class="panel-kicker">季節性</p><h2>年度 × 月份熱度</h2></div><label class="inline-select">商品<select id="heatmap-product"></select></label></div><div class="chart" id="heatmap-chart"></div></section>
+        <section class="panel"><div class="panel-header stack-mobile"><div><p class="panel-kicker">同期比較</p><h2>同月份跨年度</h2></div><label class="inline-select">月份<select id="compare-month"></select></label></div><div class="chart" id="compare-chart"></div></section>
+      </div>
+      <div class="two-column lower-grid">
+        <section class="panel"><div class="panel-header"><div><p class="panel-kicker">商品結構</p><h2>商品銷售排行</h2></div></div><div class="chart ranking" id="ranking-chart"></div></section>
+        <section class="panel insight-panel"><div class="panel-header"><div><p class="panel-kicker">判斷提示</p><h2>目前資料觀察</h2></div></div><div id="insights" class="insights"></div></section>
+      </div>
+      <section class="panel panel-wide table-panel"><div class="panel-header"><div><p class="panel-kicker">明細</p><h2>每月商品彙總</h2></div><span class="panel-note" id="row-count"></span></div><div class="table-wrap"><table><thead><tr><th>月份</th><th>商品</th><th>數量</th><th>單位</th><th>平均單價</th><th>銷售金額</th></tr></thead><tbody id="detail-body"></tbody></table></div></section>
+      <footer>資料來源：本次上傳的 Excel 檔案 · 不同單位的商品數量不宜直接相加比較</footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="xlsx-reader.js"></script><script src="app.js"></script>
+</body>
+</html>
